@@ -1,0 +1,4 @@
+# /etc/default/atop
+INTERVAL=60
+LOGPATH="/var/log/atop"
+OUTFILE="$LOGPATH/daily.log"
