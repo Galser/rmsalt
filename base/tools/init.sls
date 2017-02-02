@@ -12,6 +12,7 @@ sys.packages:
 # yep no fun, sometimes it is usefull
       - tcpdump
       - screen
+      - pbzip2
 
 # --- atop
 atop:
@@ -31,4 +32,21 @@ atop:
     - group: root
     - mode: 644
 
+# --- postfix
+postfix:
+  pkg:
+   - installed
+  service:
+   - running
+   - watch:
+      - pkg: postfix
+      - file: /etc/postfix/main.cf
+
+/etc/postfix/main.cf:
+  file:
+    - managed
+    - source: salt://tools/files/postfix_main_cf
+    - user: root
+    - group: root
+    - mode: 644
 
