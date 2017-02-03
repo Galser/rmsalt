@@ -28,3 +28,15 @@ Apache2_config:
     - user: root
     - group: root
     - mode: 644
+
+
+{% if 'modsec' in grains['roles'] %}
+Enable mod_secure module:
+  apache_module.enabled:
+    - name: mod_secure
+
+Enable mod_headers module:
+  apache_module.enabled:
+    - name: mod_headers
+{% endif %}
+
