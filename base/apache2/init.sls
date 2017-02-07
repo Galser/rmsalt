@@ -31,12 +31,16 @@ Apache2_config:
 
 
 {% if 'modsec' in grains['roles'] %}
+libapache2-modsecurity:
+  pkg:
+    - installed
+
 Enable mod_secure module:
   apache_module.enabled:
-    - name: mod_secure
+    - name: security2
 
 Enable mod_headers module:
   apache_module.enabled:
-    - name: mod_headers
+    - name: headers
 {% endif %}
 
