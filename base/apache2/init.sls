@@ -1,39 +1,35 @@
-{% if grains['os'] == 'RedHat' %}
-  {% set apache_name = 'httpd' %}
-  {% set apache_config_name = 'redhat' %}
-  {% set apache_config_path = '/etc/http2/http2.conf' %}
-{% elif grains['os'] == 'Ubuntu' %}
-  {% set apache_name = 'apache2' %}
-  {% set apache_config_name = 'ubuntu' %}
-  {% set apache_config_path = '/etc/apache2/apache2.conf' %}
-{% endif %}
+{% set apache = salt['grains.filter_by']({
+    'Debian': {'pkg': 'apache2', 'srv': 'apache2', 'config_path' : '/etc/apache2/apache2.conf', 'modsec_pkg' : 'libapache2-modsecurity', 'config_name' : 'ubuntu' },
+    'RedHat': {'pkg': 'httpd', 'srv': 'httpd', 'config_path ' : '/etc/http2/http2.conf', 'modsec_pkg' : 'mod_security', 'config_name' : 'redhat'},
+}, default='Debian') %}
 {% if 'modsec' in grains['roles'] %}
-  {% set apache_config_name = apache_config_name+'_modsec' %}
+  {% set apache.config_name = apache.config_name+'_modsec' %}
 {% endif %}
-{% set apache_config_name = apache_config_name+'.conf' %}
+{% set apache.config_name = apache.config_name+'.conf' %}
 
-apache2:
-  pkg:
-    - installed
-  service:
-    - running
+
+Apache2:
+  pkg.installed:
+    - name: {{ apache.pkg }}
+  service.running:
+    - name: {{ apache.srv }}
     - watch:
-      - pkg: apache2
+      - pkg: Apache2
       - file: Apache2_config
+
 
 Apache2_config:
   file.managed:
-    - name: {{ apache_config_path }}
-    - source: salt://apache2/files/{{ apache_config_name }}
+    - name: {{ apache.config_path }}
+    - source: salt://apache2/files/{{ apache.config_name }}
     - user: root
     - group: root
     - mode: 644
 
-
 {% if 'modsec' in grains['roles'] %}
-libapache2-modsecurity:
-  pkg:
-    - installed
+Apache2 modsecurity:
+  pkg.installed:
+    - name : {{ apache.modsec_pkg }}
 
 Enable mod_secure module:
   apache_module.enabled:
