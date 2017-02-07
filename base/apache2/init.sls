@@ -3,9 +3,8 @@
     'RedHat': {'pkg': 'httpd', 'srv': 'httpd', 'config_path ' : '/etc/http2/http2.conf', 'modsec_pkg' : 'mod_security', 'config_name' : 'redhat'},
 }, default='Debian') %}
 {% if 'modsec' in grains['roles'] %}
-  {% set apache.config_name = apache.config_name+'_modsec' %}
+  {% do apache.update({'config_name':apache.config_name+'_modsec'}) %}
 {% endif %}
-{% set apache.config_name = apache.config_name+'.conf' %}
 
 
 Apache2:
@@ -21,7 +20,7 @@ Apache2:
 Apache2_config:
   file.managed:
     - name: {{ apache.config_path }}
-    - source: salt://apache2/files/{{ apache.config_name }}
+    - source: salt://apache2/files/{{ apache.config_name }}.conf
     - user: root
     - group: root
     - mode: 644

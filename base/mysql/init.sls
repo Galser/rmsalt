@@ -2,8 +2,6 @@
     'Debian': {'pkg': 'mysql-server', 'srv': 'mysql', 'config_path' : '/etc/mysql/my.cnf', 'config_name' : 'ubuntu' },
     'RedHat': { 'pkg': 'mysql-server', 'srv': 'mysql', 'config_path' : '/etc/mysql/my.cnf', 'config_name' : 'redhat'},
 }, default='Debian') %}
-{% set mysqlserver.config_name = mysqlserver.config_name+'.conf' %}
-
 
 MySQL-Server:
   pkg.installed:
@@ -18,7 +16,7 @@ MySQL-Server:
 MySQL_config:
   file.managed:
     - name: {{ mysqlserver.config_path }}
-    - source: salt://mysqlserver/files/{{ mysqlserver.config_name }}
+    - source: salt://mysqlserver/files/{{ mysqlserver.config_name }}.cnf
     - user: root
     - group: root
     - mode: 644
